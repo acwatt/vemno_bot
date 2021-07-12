@@ -12,3 +12,7 @@ Basic features:
 
 # venmo-api package
 pip install venmo-api --upgrade
+
+
+# Emoticons
+https://japaneseemoticons.me/
