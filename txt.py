@@ -2,15 +2,17 @@
 # File name: 
 # Authors: Aaron Watt
 # Date: 2021-07-09
-""""""
+"""Sending text messages over Aaron's gmail account."""
 # Standard library imports
-import smtplib, ssl
+import smtplib
+import ssl
 
 # Third-party imports
 
 # Local application imports
 
 # GLOBALS ----------------------------
+
 
 # FUNCTIONS --------------------------
 def send_text(subject, body):
@@ -29,6 +31,7 @@ def send_text(subject, body):
     with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
         server.login(sender_email, password)
         server.sendmail(sender_email, receiver_email, message)
+
 
 # MAIN -------------------------------
 if __name__ == "__main__":
