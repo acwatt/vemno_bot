@@ -26,7 +26,7 @@ class VenmoBot:
         self.my_id = '2566471037222912623'
         self.venmo = self.get_venmo_client()
         self.last_month, self.this_month, self.next_month = self.get_month()
-        self.username_csv = Path.cwd() / 'usernames.csv'
+        self.username_csv = Path(r"/media/a/E/Documents/kcgcGoogleDrive/College_future/Housing/The Jungle on Ellsworth/Utilities/usernames.csv")
         self.emoticon_csv = Path.cwd() / 'emoticons.csv'
         self.username_list = self.get_username_list()
         self.username_dict = self.get_user_ids()
