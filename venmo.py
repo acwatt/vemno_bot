@@ -32,12 +32,11 @@ class VenmoBot:
         self.username_dict = self.get_user_ids()
         self.signature = '~Love, VenmoBot'
         self.charge_reason = 'Jungle Water, Internet, Electricity'
-
+        print(self.last_month, self.this_month, self.next_month)
 
     def get_venmo_client(self):
         print('Generating Venmo Client object with access token.')
         return Client(access_token=self.access_token)
-
 
     def get_month(self):
         # todo: get actual billing dates of bills and list those, adding into the request message
@@ -50,7 +49,6 @@ class VenmoBot:
         year = today.strftime('%Y')
         return f"{lastMonth} {year}", f"{thisMonth} {year}", f"{nextMonth} {year}"
 
-
     def get_username_list(self):
         """Return list of housemate usernames from CSV."""
         # todo: change printing to logging
@@ -62,14 +60,12 @@ class VenmoBot:
         print(f'List of housemate username:\n{mylist}')
         return mylist
 
-
     def get_access_token(self):
         """Use password to return Venmo access token -- requires 2-factor authentication."""
         # todo: store password and access_token in file that is .gitignored
         access_token = Client.get_access_token(username='kratzer.canby@gmail.com',
                                                password='L8OS8gbEoaEoG85hvfaxAU6FsUbK9KRP')
         return access_token
-
 
     def get_user_ids(self):
         """Return dict of housemate usernames and IDs."""
@@ -89,7 +85,6 @@ class VenmoBot:
                       body=f'{len(user_dict)} housemate usernames found when 8 expected!')
             raise
 
-
     def utilties_amount(self):
         """Return per-housemate total for all utility bills this month.
 
@@ -99,10 +94,9 @@ class VenmoBot:
         4. append amounts for each bill to shared google spreadsheet
         5. return per-housemate bill (total / 9 housemates)
         """
-        # todo: get total utitilies from email bills
+        # todo: get total utitilies from email bills (or bills.csv)
         total = 600
         return total / 9
-
 
     def select_emoticon(self, level):
         """Return randomly selected string of emoji for level from CSV"""
@@ -113,25 +107,22 @@ class VenmoBot:
         col = f'emoticon{n}'  # name of column in CSV
         return row[col].values[0]
 
-
-
-
-
     def request_from(self, username, amount, level=0, last_month=None, this_month=None):
         """Submit a Venmo request amount from user_id and store transaction ID to CSV."""
         print(f'Requesting ${amount} from {username}')
         user_id = self.username_dict[username]
         # todo: send text if error
         emoticon = self.select_emoticon(level)
-        if last_month == None:
+        if last_month is None:
             last_month, this_month = self.last_month, self.this_month
-        note = f'{emoticon}\n\n{self.charge_reason} || {last_month}-{this_month}\n{self.signature}\n[[{level}]]'
+        note = f'{emoticon}\n\n{self.charge_reason}\n{last_month}-{this_month}\n{self.signature}'
         try:
             self.venmo.payment.request_money(amount, note, user_id)
         except Exception as err:
             send_text('Venmo bot error :/', err)
         # todo: check pending charges list to see if the charge posted. If not, charge
-
+        return level
+        # todo: save level to charges.csv, add 1 to it each time.
 
     def save_pending_charges(self):
         """Save dict of pending charges from Venmo api to CSV."""
@@ -142,7 +133,6 @@ class VenmoBot:
         # todo: add CSV path to __init__
         # todo: load CSV, return list using tools csv_to_dict
         pass
-
 
     def send_to(self, username, amount):
         """Submit a Venmo payment for amount to user_id."""
@@ -156,7 +146,6 @@ class VenmoBot:
         user_id = self.username_dict[username]
         self.venmo.payment.send_money(amount, f"{self.next_month} rent for room 6", str(user_id))
 
-
     def get_pending_payments(self):
         """Return dict of pending payments from Venmo api."""
         charges = self.venmo.payment.get_charge_payments()
@@ -165,13 +154,11 @@ class VenmoBot:
             if charge.status.value == 'pending':
                 pending[charge.id] = {}
 
-
     def print_charges(self):
         """Print all pending chargest from me to someone else."""
         charges = self.venmo.payment.get_charge_payments()
         for charge in charges:
             print(f'\n{charge.status.value} charge of ${charge.amount} to {charge.target.display_name}')
-
 
     def print_pending_charges(self):
         """Print all pending chargest from me to someone else."""
@@ -179,7 +166,6 @@ class VenmoBot:
         for charge in charges:
             if charge.status.value == 'pending':
                 print(f'\nPending charge of ${charge.amount} to {charge.target.display_name}. ID: {charge.id}')
-
 
     def update_charges(self):
         """Load and update dataframe of charges."""
@@ -191,7 +177,6 @@ class VenmoBot:
         # update local charges df with venmo df
         # save updated charges df to CSV
         pass
-
 
     def search_pending_charges(self):
         """Return list of payment object IDs from venmo bot that """
@@ -213,7 +198,6 @@ class VenmoBot:
             print("\n" + "=" * 15 + "\n\tNEXT PAGE\n" + "=" * 15 + "\n")
             transactions = transactions.get_next_page()
 
-
     def print_all_transactions(self):
         """Print all recent transactions."""
         transactions = self.venmo.user.get_user_transactions(user_id=self.my_id)
@@ -225,7 +209,6 @@ class VenmoBot:
 
             print("\n" + "=" * 15 + "\n\tNEXT PAGE\n" + "=" * 15 + "\n")
             transactions = transactions.get_next_page()
-
 
     def check_if_paid(self, user_id):
         """Check if user_id has paid this month's request."""
@@ -249,6 +232,7 @@ def get_unique_charge_identifier(user_id, note):
     months = note.lstrip(left_delim).rstrip(right_delim)
     return f'{user_id}_{months}'
 
+
 def print_transaction_details(transaction):
     if transaction.payment_type == 'charge':
         message = f'{transaction.actor.display_name} charged ' \
@@ -261,6 +245,7 @@ def print_transaction_details(transaction):
                   f'{transaction.amount}'
     print(message)
 
+
 # MAIN -------------------------------
 if __name__ == "__main__":
     import time
@@ -268,12 +253,17 @@ if __name__ == "__main__":
     madi = 'Madison-Raa'
     aaron = 'Aaron-Kau'
 
-    bot.request_from(aaron, 0.75, level=2)
+    for user in bot.username_dict.keys():
+        bot.request_from(user, 47.85, level=1)
+
+    # Charge for Sep 133.06
+    # Charge for Aug 80.75
+    # bot.request_from(aaron, 0.75, level=2)
     bot.print_pending_charges()
     # bot.request_from(aaron, 1, level=2)
     # bot.print_pending_charges()
     # todo: figure out why requests aren't working
-    ## perhaps the Venmo api has been updated but the python wrapper has not?
+    #    perhaps the Venmo api has been updated but the python wrapper has not?
 
 
 # REFERENCES -------------------------
