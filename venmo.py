@@ -18,7 +18,7 @@ from venmo_api import Client
 from txt import send_text
 
 
-class venmo_bot:
+class VenmoBot:
     """Class to do various Venmo and administrative tasks for paying monthly bills."""
     def __init__(self):
         self.device_id = '54594367-57Y4-5F17-94Y1-6HP31O105YQ3'
@@ -264,7 +264,7 @@ def print_transaction_details(transaction):
 # MAIN -------------------------------
 if __name__ == "__main__":
     import time
-    bot = venmo_bot()
+    bot = VenmoBot()
     madi = 'Madison-Raa'
     aaron = 'Aaron-Kau'
 
