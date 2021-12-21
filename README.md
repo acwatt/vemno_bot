@@ -16,3 +16,9 @@ pip install venmo-api --upgrade
 
 # Emoticons
 https://japaneseemoticons.me/
+
+# Current Status
+- can subit requests for everyone's usernames in a spreadsheet
+- can take manual input of $ to request, but cannot yet parse emails to gather bills
+- Need to request manually each month and manually gather bills from email
+- 
