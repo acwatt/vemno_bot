@@ -20,7 +20,7 @@ from txt import send_text
 
 class VenmoBot:
     """Class to do various Venmo and administrative tasks for paying monthly bills."""
-    def __init__(self):
+    def __init__(self, expected_users=8):
         self.device_id = '54594367-57Y4-5F17-94Y1-6HP31O105YQ3'
         self.access_token = 'a3d7848640360e2442e96748d9d75923ee24adea9969277e76e0e726951b72fe'
         self.my_id = '2566471037222912623'
@@ -29,7 +29,7 @@ class VenmoBot:
         self.username_csv = Path(r"/media/a/E/Documents/kcgcGoogleDrive/College_future/Housing/The Jungle on Ellsworth/Utilities/usernames.csv")
         self.emoticon_csv = Path.cwd() / 'emoticons.csv'
         self.username_list = self.get_username_list()
-        self.username_dict = self.get_user_ids()
+        self.username_dict = self.get_user_ids(expected_users=expected_users)
         self.signature = '~Love, VenmoBot'
         self.charge_reason = 'Jungle Water, Internet, Electricity'
         print(self.last_month, self.this_month, self.next_month)
@@ -67,7 +67,7 @@ class VenmoBot:
                                                password='L8OS8gbEoaEoG85hvfaxAU6FsUbK9KRP')
         return access_token
 
-    def get_user_ids(self):
+    def get_user_ids(self, expected_users=8):
         """Return dict of housemate usernames and IDs."""
         user_dict = {}
         for username in self.username_list:
@@ -76,7 +76,7 @@ class VenmoBot:
                 if user.username in self.username_list:
                     # todo: add check for multiple matches
                     user_dict[username] = user.id
-        if len(user_dict) == 8:
+        if len(user_dict) == expected_users:
             print('Found all housemates!')
             return user_dict
         else:
@@ -249,13 +249,18 @@ def print_transaction_details(transaction):
 # MAIN -------------------------------
 if __name__ == "__main__":
     import time
-    bot = VenmoBot()
-    madi = 'Madison-Raa'
-    aaron = 'Aaron-Kau'
+    bot = VenmoBot(expected_users=7)
+    # madi = 'Madison-Raa'
+    # aaron = 'Aaron-Kau'
 
     for user in bot.username_dict.keys():
-        bot.request_from(user, 47.85, level=1)
+        bot.request_from(user, 125.43, level=1, last_month='Oct 2021', this_month='Nov 2021')
 
+    # updated documents are in /media/a/E/Documents/kcgcGoogleDrive/College_future/Housing/The Jungle on Ellsworth/Utilities
+
+    # Charge for Dec 125.43
+    # Charge for Nov 109.83
+    # Charge for (before) Oct 47.85
     # Charge for Sep 133.06
     # Charge for Aug 80.75
     # bot.request_from(aaron, 0.75, level=2)
