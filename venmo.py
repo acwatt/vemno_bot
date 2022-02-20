@@ -74,6 +74,7 @@ class VenmoBot:
             users = self.venmo.user.search_for_users(query=username)
             for user in users:
                 if user.username in self.username_list:
+                    print(f'Found user {user.username}')
                     # todo: add check for multiple matches
                     user_dict[username] = user.id
         if len(user_dict) == expected_users:
@@ -249,15 +250,17 @@ def print_transaction_details(transaction):
 # MAIN -------------------------------
 if __name__ == "__main__":
     import time
-    bot = VenmoBot(expected_users=7)
+    bot = VenmoBot(expected_users=8)
     # madi = 'Madison-Raa'
     # aaron = 'Aaron-Kau'
 
     for user in bot.username_dict.keys():
-        bot.request_from(user, 125.43, level=1, last_month='Oct 2021', this_month='Nov 2021')
+        bot.request_from(user, 121.00, level=1, last_month='Jan 2022', this_month='Feb 2022')
 
     # updated documents are in /media/a/E/Documents/kcgcGoogleDrive/College_future/Housing/The Jungle on Ellsworth/Utilities
 
+    # Charge for Feb 121.00
+    # Charge for Jan 140.24
     # Charge for Dec 125.43
     # Charge for Nov 109.83
     # Charge for (before) Oct 47.85
